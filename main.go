@@ -2,34 +2,35 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"log"
 )
 
-type Solution struct {}
+func main() {
+	// Lab 2 Leap Year Check - Deris O
+	var inputYear int;
+	totalAttempts := 0;
 
-func (s *Solution) checkPalindrome(number int) bool {
-	// abs value of number - base case
-	math.Abs(float64(number));
+	// user input
+	for inputYear <= 0 {
+		if totalAttempts > 0 {
+			fmt.Print(("Invalid Input! Try Again.\n"))
+		}
 
-	originalNum := number
+		fmt.Print("\nEnter a year: ");
+		// From code 2
+		_, err := fmt.Scanln(&inputYear);
 
-	reverseNum := 0
+		if err != nil {
+			log.Fatal(err);
+		}
 
-	for number != 0 {
-		// Get the last digit and then add to a temporary
-		lastDigit := number % 10
-		reverseNum = reverseNum * 10 + lastDigit
-		number = number / 10
+		totalAttempts++;
 	}
 
-	return reverseNum == originalNum
-}	
-
-func main() {
-	// Leet-Code Problem - isPalindrome
-	solution_obj := &Solution{}
-
-	isPalindrome := solution_obj.checkPalindrome(202)
-	
-	fmt.Println("Is a palindrome?:", isPalindrome)
+	//check leap
+	if inputYear % 4 == 0 && (inputYear % 100 != 0 || inputYear % 400 == 0) {
+		fmt.Printf("\n%d is a valid leap year", inputYear);
+	} else {
+		fmt.Printf("\n%d is not a valid leap year", inputYear);
+	}
 }
