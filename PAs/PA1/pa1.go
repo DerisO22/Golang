@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"crypto/rand"
 	"fmt"
+	"log"
 	"math/big"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -13,7 +15,7 @@ const FILE_TO_READ = "messages.txt";
 const DATE_LAYOUT = "01/02/2006";
 
 // reads and add to list
-func readFromFile(messageArray *[]string, messageArrayLength *int) {
+func readFromFile(messageArray *[]string) {
 	// From Lab 3 Example of Reading File
 	readFile, err := os.Open(FILE_TO_READ);
 	
@@ -29,7 +31,6 @@ func readFromFile(messageArray *[]string, messageArrayLength *int) {
 
 	for scanner.Scan() {
 		*messageArray = append(*messageArray, scanner.Text());
-		*messageArrayLength++;
 	}
 }
 
@@ -112,41 +113,76 @@ func getZodiacSign(inputBirthDate time.Time) string {
 	}
 }
 
+func getUserInputs(name *string, birthDate *time.Time) {
+	// get input
+	var birthDateInput string;
+	validBirthDate := false;
+
+	// using code 3 from lab 2
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("What is your name?: ")
+	
+	// ReadString reads until the delimiter '\n' (newline)
+	nameInput, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Trim the newline character from the end of the string
+	nameInput = strings.TrimSpace(nameInput);
+	*name = nameInput;
+
+	for validBirthDate == false {
+		fmt.Print("When were you born (mm/dd/yyyy)?: ");
+		birthDateInput, _= reader.ReadString('\n');
+		birthDateInput = strings.TrimSpace(birthDateInput);
+		
+		// format date: https://www.geeksforgeeks.org/go-language/time-parse-function-in-golang-with-examples/
+		formattedBirthDate, err := time.Parse(DATE_LAYOUT, birthDateInput);
+		if err != nil {
+			fmt.Println("Error formatting birth date: ", err);
+			continue;
+		}
+
+		// extra checks on valid date input
+		if formattedBirthDate.After(time.Now()) {
+			fmt.Println("Invalid! Birthdate cannot be in the future.\n");
+			continue;
+		}
+
+		// Oldest person ever was 122, so anything over that is somewhat unrealistic
+		if calculateAge(formattedBirthDate) > 122 {
+			fmt.Println("Invalid! Enter a reasonable birthday\n");
+			continue;
+		}
+
+		validBirthDate = true;
+		*birthDate = formattedBirthDate;
+	}
+}
+
 func main() {
 	// using slice like the generateArray func from lab3 example
 	var messages []string;
+	var birthDate time.Time;
 	var name string;
-	var birthDate string;
-	messageArrayLength := 0;
 
-	// I could just return the new populated message slice
+	// I could just return the new populated messages slice
 	// in readFromFile, but wanted to try out pointers/pass-by-ref
-	readFromFile(&messages, &messageArrayLength);
+	readFromFile(&messages);
 
 	fmt.Println("\nI'm am the Almighty Psychic Fortune Teller!");
 	fmt.Println("I know what's in your future!!!\n");
 
-	// get info
-	fmt.Print("What is your name?: ");
-	fmt.Scan(&name);
-
-	fmt.Print("When were you born (mm/dd/yyyy)?: ");
-	fmt.Scan(&birthDate);
-
-	// format date: https://www.geeksforgeeks.org/go-language/time-parse-function-in-golang-with-examples/
-	formattedBirthDate, err := time.Parse(DATE_LAYOUT, birthDate);
-	if err != nil {
-		fmt.Println("Error formatting birth date: ", err);
-		return;
-	}
+	// get input
+	getUserInputs(&name, &birthDate);
 
 	// get info
-	userAge := calculateAge(formattedBirthDate);
-	zodiacSign := getZodiacSign(formattedBirthDate);
-	randomFortuneMessage := messages[generateRandNumber(messageArrayLength)];
+	userAge := calculateAge(birthDate);
+	zodiacSign := getZodiacSign(birthDate);
+	randomFortuneMessage := messages[generateRandNumber(len(messages))];
 
 	// output info
 	fmt.Printf("\n%s, you are %d years old\n", name, userAge);
-	fmt.Printf("You are a: %s\n", zodiacSign);
+	fmt.Printf("Your Zodiac Sign: %s\n", zodiacSign);
 	fmt.Printf("Fortune Message: \n %s\n\n", randomFortuneMessage);
 }
