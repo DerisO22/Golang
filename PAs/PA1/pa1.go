@@ -63,6 +63,54 @@ func calculateAge(inputBirthDate time.Time) int {
 	return age;
 }
 
+func getZodiacSign(inputBirthDate time.Time) string {
+	// All the ranges and zodiac signs from Appendix A:
+	/*  January 21 February 19 Aquarius
+		February 20 March 20 Pisces
+		March 21 April 20 Aries
+		April 21 May 21 Taurus
+		May 22 June 21 Gemini
+		June 22 July 22 Cancer
+		July 23 August 21 Leo
+		August 22 September 23 Virgo
+		September 24 October 23 Libra
+		October 24 November 22 Scorpio
+		November 23 December 21 Sagittarius
+		December 22 January 20 Capricorn
+	*/	
+	day := inputBirthDate.Day();
+	month := inputBirthDate.Month();
+
+	switch {
+		case (month == 1 && day >= 21) || (month == 2 && day <= 19):
+			return "Aquaris";
+		case (month == 2 && day >= 20) || (month == 3 && day <= 20):
+			return "Pisces";
+		case (month == 3 && day >= 21) || (month == 4 && day <= 20):
+			return "Aries";
+		case (month == 4 && day >= 21) || (month == 5 && day <= 21):
+			return "Taurus";
+		case (month == 5 && day >= 22) || (month == 6 && day <= 21):
+			return "Gemini";
+		case (month == 6 && day >= 22) || (month == 7 && day <= 22):
+			return "Cancer";
+		case (month == 7 && day >= 23) || (month == 8 && day <= 21):
+			return "Leo";
+		case (month == 8 && day >= 22) || (month == 9 && day <= 23):
+			return "Virgo";
+		case (month == 9 && day >= 24) || (month == 10 && day <= 23):
+			return "Libra";
+		case (month == 10 && day >= 24) || (month == 11 && day <= 22):
+			return "Scorpio";
+		case (month == 11 && day >= 23) || (month == 12 && day <= 21):
+			return "Sagittarius";
+		case (month == 12 && day >= 22) || (month == 1 && day <= 20):
+			return "Capricorn";
+		default:
+			return "";
+	}
+}
+
 func main() {
 	// using slice like the generateArray func from lab3 example
 	var messages []string;
@@ -84,15 +132,18 @@ func main() {
 	fmt.Print("When were you born (mm/dd/yyyy)?: ");
 	fmt.Scan(&birthDate);
 
+	// format date: https://www.geeksforgeeks.org/go-language/time-parse-function-in-golang-with-examples/
 	formattedBirthDate, err := time.Parse(DATE_LAYOUT, birthDate);
-	
 	if err != nil {
 		fmt.Println("Error formatting birth date: ", err);
 		return;
 	}
 
 	userAge := calculateAge(formattedBirthDate);
+	zodiacSign := getZodiacSign(formattedBirthDate);
 
+	// output all the info
 	fmt.Printf("\n%s, you are %d years old\n", name, userAge);
+	fmt.Printf("You are an: %s\n", zodiacSign);
 
 }
