@@ -1,1 +1,1 @@
-# Go Lab 2 - Emerging Languages
+# GoLang - Emerging Languages
