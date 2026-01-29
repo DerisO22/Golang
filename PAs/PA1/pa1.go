@@ -139,11 +139,12 @@ func main() {
 		return;
 	}
 
+	// get info
 	userAge := calculateAge(formattedBirthDate);
 	zodiacSign := getZodiacSign(formattedBirthDate);
 	randomFortuneMessage := messages[generateRandNumber(messageArrayLength)];
 
-	// output all the info
+	// output info
 	fmt.Printf("\n%s, you are %d years old\n", name, userAge);
 	fmt.Printf("You are an: %s\n", zodiacSign);
 	fmt.Printf("Fortune Message: \n %s\n\n", randomFortuneMessage);
