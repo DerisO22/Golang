@@ -137,7 +137,7 @@ func getUserInput() {
 		
 		studentInfo = make(map[string]StudentStruct);
 
-		studentID := fmt.Sprint("00", i + 1);
+		studentID := fmt.Sprintf("%08.2f", float32(i + 1));
 
 		studentInfo[studentID] = StudentStruct{
 			person: PersonStruct{
